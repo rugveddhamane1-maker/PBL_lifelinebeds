@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>City Bed Analytics & Shortage Monitor - LifeLine</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="/static/css/styles.css">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col">
+
+  <!-- TOP HEADER -->
+  <header class="bg-white sticky top-0 z-30 border-b border-slate-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="/" class="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center text-white text-lg font-bold">
+          <i class="fa-solid fa-chart-line text-rose-500"></i>
+        </a>
+        <div>
+          <h1 class="text-lg font-extrabold text-slate-900 tracking-tight">City Health Command & Analytics</h1>
+          <p class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Critical Care Capacity Surveillance</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a href="/" class="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition">
+          <i class="fa-solid fa-arrow-left mr-1"></i> Patient Portal
+        </a>
+        <a href="/staff" class="px-3.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-md shadow-rose-600/20 transition">
+          <i class="fa-solid fa-user-doctor mr-1"></i> Staff Console
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-6">
+    
+    <!-- KPI SUMMARY METRICS -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Health Centers</div>
+        <div class="text-3xl font-black text-slate-900 mt-2" id="kpiHospitals">-</div>
+        <div class="text-xs text-slate-500 mt-1">Under Real-Time Tracking</div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Beds Capacity</div>
+        <div class="text-3xl font-black text-slate-900 mt-2" id="kpiTotalBeds">-</div>
+        <div class="text-xs text-slate-500 mt-1">Across Metro Area</div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Available Beds</div>
+        <div class="text-3xl font-black text-emerald-600 mt-2" id="kpiAvailBeds">-</div>
+        <div class="text-xs text-emerald-600 font-semibold mt-1">Ready for Immediate Admission</div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">City Occupancy Rate</div>
+        <div class="text-3xl font-black text-slate-900 mt-2" id="kpiOccupancy">- %</div>
+        <div class="w-full bg-slate-100 h-2 rounded-full mt-2 overflow-hidden">
+          <div id="kpiOccupancyBar" class="bg-rose-500 h-full rounded-full" style="width: 0%"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CRITICAL SHORTAGE WARNING BANNER -->
+    <div class="bg-rose-50 border border-rose-200 rounded-2xl p-6">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="w-3 h-3 rounded-full bg-rose-600 animate-ping"></span>
+        <h3 class="font-extrabold text-rose-900 text-base">Critical Shortage Alert Protocol (&le; 2 Beds Available)</h3>
+      </div>
+      <p class="text-xs text-rose-700 mb-4">
+        The following healthcare facilities require immediate bed turnaround or casualty divert protocol due to severely depleted critical care capacity:
+      </p>
+
+      <div id="criticalHospitalsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+        <!-- Injected by script -->
+      </div>
+    </div>
+
+    <!-- VISUAL CHARTS -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      
+      <!-- Bar Chart: Available vs Occupied by Bed Type -->
+      <div class="lg:col-span-8 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <h3 class="font-extrabold text-slate-900 text-sm mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-chart-column text-indigo-500"></i> Ward Bed Distribution: Available vs. Occupied
+        </h3>
+        <div class="h-72">
+          <canvas id="bedsBarChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Doughnut Chart: City Total Bed Split -->
+      <div class="lg:col-span-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+        <h3 class="font-extrabold text-slate-900 text-sm mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-chart-pie text-rose-500"></i> Bed Category Split
+        </h3>
+        <div class="h-64 flex items-center justify-center">
+          <canvas id="bedsPieChart"></canvas>
+        </div>
+        <div class="text-[11px] text-slate-400 text-center mt-3">Calculated live across all registered centers</div>
+      </div>
+
+    </div>
+
+    <!-- LIVE REAL-TIME AUDIT STREAM -->
+    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-sm font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+          <i class="fa-solid fa-satellite-dish text-emerald-500 animate-pulse"></i> Live Central Bed Audit Stream
+        </h3>
+        <span class="text-xs text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full font-bold border border-emerald-200">
+          WebSocket Active
+        </span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left">
+          <thead>
+            <tr class="border-b border-slate-200 text-[11px] font-bold text-slate-400 uppercase">
+              <th class="py-2.5 px-3">Time</th>
+              <th class="py-2.5 px-3">Ward Category</th>
+              <th class="py-2.5 px-3">Inventory Delta</th>
+              <th class="py-2.5 px-3">Staff Authority</th>
+            </tr>
+          </thead>
+          <tbody id="analyticsAuditTable">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    let barChartInstance = null;
+    let pieChartInstance = null;
+
+    async function loadAnalytics() {
+      try {
+        const [sumRes, logsRes] = await Promise.all([
+          fetch("/api/analytics/summary"),
+          fetch("/api/audit-logs?limit=15")
+        ]);
+
+        const summary = await sumRes.json();
+        const logs = await logsRes.json();
+
+        // Update KPIs
+        document.getElementById("kpiHospitals").textContent = summary.total_hospitals;
+        document.getElementById("kpiTotalBeds").textContent = summary.total_beds;
+        document.getElementById("kpiAvailBeds").textContent = summary.total_available_beds;
+        document.getElementById("kpiOccupancy").textContent = summary.city_occupancy_percentage + "%";
+        document.getElementById("kpiOccupancyBar").style.width = summary.city_occupancy_percentage + "%";
+
+        // Render Critical Shortage list
+        renderCriticalList(summary.critical_shortage_hospitals);
+
+        // Render Charts
+        renderCharts(summary);
+
+        // Render Logs
+        renderAuditLogs(logs);
+
+      } catch (e) {
+        console.error("Failed to load analytics:", e);
+      }
+    }
+
+    function renderCriticalList(list) {
+      const el = document.getElementById("criticalHospitalsList");
+      if (!list || list.length === 0) {
+        el.innerHTML = '<div class="col-span-full text-xs text-emerald-700 font-bold bg-white p-3 rounded-xl border border-emerald-200">✓ No critical shortage alerts currently reported.</div>';
+        return;
+      }
+
+      el.innerHTML = list.map(c => `
+        <div class="bg-white p-4 rounded-xl border border-rose-200 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="font-bold text-slate-900 text-sm leading-tight">${c.name}</div>
+            <div class="text-[11px] text-slate-400 mt-0.5"><i class="fa-solid fa-location-dot"></i> ${c.locality}</div>
+          </div>
+          <div class="mt-3 flex items-center justify-between text-xs">
+            <span class="px-2 py-0.5 rounded font-bold ${c.icu_available <= 1 ? 'bg-rose-100 text-rose-800' : 'bg-amber-100 text-amber-800'}">
+              ICU: ${c.icu_available} Left
+            </span>
+            <span class="px-2 py-0.5 rounded font-bold bg-blue-100 text-blue-800">
+              Ventilator: ${c.ventilator_available} Left
+            </span>
+          </div>
+          <a href="tel:${c.emergency_phone}" class="mt-3 text-center py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-bold transition">
+            <i class="fa-solid fa-phone mr-1"></i> Contact Casualty
+          </a>
+        </div>
+      `).join('');
+    }
+
+    function renderCharts(s) {
+      const categories = ['ICU', 'NICU', 'Ventilator', 'General', 'Oxygen'];
+      const availableData = [s.icu_available, s.nicu_available, s.ventilator_available, s.general_available, s.oxygen_available];
+      const occupiedData = [
+        s.icu_total - s.icu_available,
+        s.nicu_total - s.nicu_available,
+        s.ventilator_total - s.ventilator_available,
+        s.general_total - s.general_available,
+        s.oxygen_total - s.oxygen_available
+      ];
+
+      // Bar Chart
+      const barCtx = document.getElementById('bedsBarChart').getContext('2d');
+      if (barChartInstance) barChartInstance.destroy();
+      barChartInstance = new Chart(barCtx, {
+        type: 'bar',
+        data: {
+          labels: categories,
+          datasets: [
+            {
+              label: 'Available Vacant',
+              data: availableData,
+              backgroundColor: '#10b981',
+              borderRadius: 6
+            },
+            {
+              label: 'Occupied',
+              data: occupiedData,
+              backgroundColor: '#e11d48',
+              borderRadius: 6
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { stacked: true },
+            y: { stacked: true, beginAtZero: true }
+          }
+        }
+      });
+
+      // Pie Chart
+      const pieCtx = document.getElementById('bedsPieChart').getContext('2d');
+      if (pieChartInstance) pieChartInstance.destroy();
+      pieChartInstance = new Chart(pieCtx, {
+        type: 'doughnut',
+        data: {
+          labels: categories,
+          datasets: [{
+            data: [s.icu_total, s.nicu_total, s.ventilator_total, s.general_total, s.oxygen_total],
+            backgroundColor: ['#e11d48', '#f59e0b', '#3b82f6', '#6366f1', '#06b6d4'],
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } }
+          }
+        }
+      });
+    }
+
+    function renderAuditLogs(logs) {
+      const tbody = document.getElementById("analyticsAuditTable");
+      if (!tbody) return;
+      tbody.innerHTML = logs.map(l => {
+        const isInc = l.change_type === "INCREMENT";
+        const icon = isInc ? "fa-arrow-up text-emerald-500" : "fa-arrow-down text-rose-500";
+        const badge = isInc ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-rose-50 text-rose-700 border-rose-200";
+        const timeStr = new Date(l.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+        return `
+          <tr class="border-b border-slate-100 hover:bg-slate-50 text-xs">
+            <td class="py-2.5 px-3 text-slate-500">${timeStr}</td>
+            <td class="py-2.5 px-3 font-semibold text-slate-800">${l.bed_type}</td>
+            <td class="py-2.5 px-3">
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded border text-[11px] font-bold ${badge}">
+                <i class="fa-solid ${icon}"></i> ${l.previous_count} → ${l.new_count}
+              </span>
+            </td>
+            <td class="py-2.5 px-3 text-slate-600">${l.updated_by}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Connect WebSocket to auto reload analytics whenever beds change
+    function initAnalyticsWs() {
+      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+      const wsUrl = `${protocol}//${window.location.host}/ws/beds`;
+      const ws = new WebSocket(wsUrl);
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.event === "BED_UPDATED") {
+            loadAnalytics();
+          }
+        } catch (e) {}
+      };
+      ws.onclose = () => {
+        setTimeout(initAnalyticsWs, 3000);
+      };
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadAnalytics();
+      initAnalyticsWs();
+    });
+  </script>
+</body>
+</html>

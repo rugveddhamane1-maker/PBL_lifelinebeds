@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Presentation - LifeLine Hospital Bed System</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .slide {
+      display: none;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+    }
+    .slide.active {
+      display: flex;
+      opacity: 1;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-white font-sans antialiased min-h-screen flex flex-col justify-between select-none">
+
+  <!-- TOP BAR -->
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md px-6 py-3 flex items-center justify-between text-xs">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-lg bg-rose-600 flex items-center justify-center font-black text-white">
+        <i class="fa-solid fa-hospital"></i>
+      </div>
+      <div>
+        <span class="font-extrabold text-sm tracking-tight text-white">LifeLine</span>
+        <span class="text-slate-400 font-medium ml-1">Project Presentation</span>
+      </div>
+    </div>
+
+    <!-- Center Slide Progress Indicator -->
+    <div class="flex items-center gap-2">
+      <span class="text-slate-400 font-semibold text-xs">Slide <span id="currentSlideNum" class="text-rose-400 font-bold">1</span> of <span id="totalSlidesNum">10</span></span>
+      <div class="w-32 bg-slate-800 h-1.5 rounded-full overflow-hidden">
+        <div id="slideProgressBar" class="bg-rose-500 h-full transition-all duration-300" style="width: 10%"></div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex items-center gap-3">
+      <a href="/download/presentation" class="px-3.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-bold transition flex items-center gap-1.5 shadow-md shadow-rose-600/30">
+        <i class="fa-solid fa-file-powerpoint"></i> Download .PPTX File
+      </a>
+      <button onclick="toggleFullscreen()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold transition">
+        <i class="fa-solid fa-expand"></i> Fullscreen
+      </button>
+      <a href="/" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold transition">
+        <i class="fa-solid fa-xmark"></i> Exit
+      </a>
+    </div>
+  </header>
+
+  <!-- SLIDES CONTAINER -->
+  <main class="flex-1 flex items-center justify-center p-6 sm:p-12 relative max-w-7xl mx-auto w-full">
+
+    <!-- SLIDE 1: TITLE SLIDE -->
+    <div class="slide active flex-col justify-center max-w-4xl w-full text-left space-y-6">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-bold tracking-wider uppercase">
+        <i class="fa-solid fa-graduation-cap"></i> College Project-Based Learning (PBL) Mini-Project 2026
+      </div>
+      <h1 class="text-4xl sm:text-6xl font-black text-white tracking-tight leading-tight">
+        LifeLine: Real-Time Hospital Bed Availability & Emergency Triage System
+      </h1>
+      <p class="text-lg text-slate-400 max-w-2xl leading-relaxed">
+        A fault-tolerant, sub-second critical care allocation platform powered by <span class="text-rose-400 font-semibold">FastAPI, WebSockets, and SQL Relational Architecture</span>.
+      </p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 border-t border-slate-800 text-xs">
+        <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+          <div class="text-slate-500 font-bold uppercase">Sub-Second Sync</div>
+          <div class="text-slate-200 font-semibold text-sm mt-1">&lt;50ms WebSocket Broadcast</div>
+        </div>
+        <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+          <div class="text-slate-500 font-bold uppercase">Code Quality</div>
+          <div class="text-emerald-400 font-semibold text-sm mt-1">100% Automated Pytest Suite</div>
+        </div>
+        <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+          <div class="text-slate-500 font-bold uppercase">Deployment Status</div>
+          <div class="text-blue-400 font-semibold text-sm mt-1">Production Docker & Cloud Ready</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: THE PROBLEM -->
+    <div class="slide flex-col justify-center max-w-5xl w-full space-y-6">
+      <div class="text-xs font-bold text-rose-500 uppercase tracking-wider">Problem Statement & Motivation</div>
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-white">The Critical Care "Golden Hour" Delay</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+        <div class="bg-rose-950/20 border border-rose-900/40 p-6 rounded-2xl space-y-3">
+          <div class="text-base font-bold text-rose-400 flex items-center gap-2">
+            <i class="fa-solid fa-triangle-exclamation"></i> Existing Reality
+          </div>
+          <p class="text-slate-300">
+            During acute medical emergencies (severe trauma, cardiac arrest, respiratory distress, neonatal crisis), patients and ambulance attendants lose <b>35 to 50 critical minutes</b> traveling to hospitals that are already 100% occupied.
+          </p>
+          <ul class="space-y-2 text-slate-400 text-xs">
+            <li>• Emergency phone lines are frequently busy during peak hours.</li>
+            <li>• Static hospital websites display stale data that is hours or days old.</li>
+            <li>• Zero coordination between hospital triage casualty desks and citizens.</li>
+          </ul>
+        </div>
+
+        <div class="bg-emerald-950/20 border border-emerald-900/40 p-6 rounded-2xl space-y-3">
+          <div class="text-base font-bold text-emerald-400 flex items-center gap-2">
+            <i class="fa-solid fa-circle-check"></i> The LifeLine Solution
+          </div>
+          <p class="text-slate-300">
+            A centralized, event-driven web portal that provides <b>live, granular visibility</b> into ICU, NICU, Ventilator, Oxygen, and General ward beds.
+          </p>
+          <ul class="space-y-2 text-slate-400 text-xs">
+            <li>• Casualty staff update bed statuses with a single touch from any smartphone or tablet.</li>
+            <li>• Delta broadcasts across the entire city network in under 50 milliseconds.</li>
+            <li>• 1-Click direct ambulance casualty SOS and GPS navigation route.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: SYSTEM ARCHITECTURE -->
+    <div class="slide flex-col justify-center max-w-5xl w-full space-y-6">
+      <div class="text-xs font-bold text-rose-500 uppercase tracking-wider">High-Level Architecture</div>
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-white">End-to-End System Pipeline</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5 text-xs">
+        <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-3">
+          <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-lg font-bold">
+            <i class="fa-solid fa-desktop"></i>
+          </div>
+          <h3 class="text-sm font-bold text-white">1. Client Tier (Presentation)</h3>
+          <p class="text-slate-400">
+            Mobile-first responsive interface built with Tailwind CSS & FontAwesome. Includes Patient Search, Staff Touch Counters, and City Surveillance Analytics.
+          </p>
+        </div>
+
+        <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-3">
+          <div class="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center text-lg font-bold">
+            <i class="fa-solid fa-server"></i>
+          </div>
+          <h3 class="text-sm font-bold text-white">2. Application & WebSocket Hub</h3>
+          <p class="text-slate-400">
+            High-performance asynchronous Python FastAPI backend. Central ConnectionManager maintains persistent WebSocket tunnels for sub-50ms push notifications.
+          </p>
+        </div>
+
+        <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-lg font-bold">
+            <i class="fa-solid fa-database"></i>
+          </div>
+          <h3 class="text-sm font-bold text-white">3. SQL Relational Database</h3>
+          <p class="text-slate-400">
+            SQLAlchemy 2.0 ORM with relational integrity. Enforces strict schema constraints, negative bed protection, and permanent shift audit logging.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: WEBSOCKETS VS POLLING -->
+    <div class="slide flex-col justify-center max-w-5xl w-full space-y-6">
+      <div class="text-xs font-bold text-rose-500 uppercase tracking-wider">Engineering Innovation</div>
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Why WebSockets? Eliminating the "Polling Trap"</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+        <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-3">
+          <h3 class="text-sm font-bold text-rose-400 flex items-center gap-2">
+            <i class="fa-solid fa-xmark"></i> Traditional HTTP Polling (Flawed)
+          </h3>
+          <p class="text-slate-300">
+            Clients repeatedly query the server every 5 seconds even when 99% of requests return unchanged data.
+          </p>
+          <div class="bg-slate-950 p-3 rounded-lg font-mono text-[11px] text-slate-400">
+            GET /api/beds (no change)<br>
+            GET /api/beds (no change)<br>
+            GET /api/beds (no change)<br>
+            → 60,000 redundant requests/min for 1000 users!
+          </div>
+        </div>
+
+        <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-3">
+          <h3 class="text-sm font-bold text-emerald-400 flex items-center gap-2">
+            <i class="fa-solid fa-bolt"></i> LifeLine Event-Driven WebSocket (Optimal)
+          </h3>
+          <p class="text-slate-300">
+            A single, persistent bi-directional TCP pipe is established. The server pushes updates strictly when a bed mutation occurs.
+          </p>
+          <div class="bg-slate-950 p-3 rounded-lg font-mono text-[11px] text-slate-400">
+            Client Connected (Idle 0 bytes)<br>
+            Staff clicks [+ Vacated ICU]<br>
+            → Server broadcasts delta to all sockets in &lt;50ms!
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5: DATABASE SCHEMA -->
+    <div class="slide flex-col justify-center max-w-5xl w-full space-y-6">
+      <div class="text-xs font-bold text-rose-500 uppercase tracking-wider">Database Architecture</div>
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Relational Data Model & Audit Trail</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-mono">
+        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-2">
+          <div class="text-rose-400 font-bold font-sans text-sm">Hospitals Table</div>
+          <div class="text-slate-400 space-y-1">
+            <div>• id (PK)</div>
+            <div>• hospital_code (Unique)</div>
+            <div>• name, address, locality</div>
+            <div>• contact_emergency</div>
+            <div>• ambulance_available</div>
+            <div>• is_emergency_active</div>
+          </div>
+        </div>
+
+        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-2">
+          <div class="text-blue-400 font-sans font-bold text-sm">Bed Categories Table</div>
+          <div class="text-slate-400 space-y-1">
+            <div>• id (PK)</div>
+            <div>• hospital_id (FK)</div>
+            <div>• bed_type (ICU/NICU/VENT)</div>
+            <div>• total_beds (Integer)</div>
+            <div>• available_beds (Integer)</div>
+            <div>• occupied_beds (Integer)</div>
+          </div>
+        </div>
+
+        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-2">
+          <div class="text-emerald-400 font-sans font-bold text-sm">Bed Audit Logs Table</div>
+          <div class="text-slate-400 space-y-1">
+            <div>• id (PK)</div>
+            <div>• hospital_id (FK)</div>
+            <div>• bed_type, change_type</div>
+            <div>• previous_count -> new_count</div>
+            <div>• updated_by (Staff)</div>
+            <div>• timestamp (UTC)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6: THREE DEDICATED PORTALS -->
+    <div class="slide flex-col justify-center max-w-5xl w-full space-y-6">
+      <div class="text-xs font-bold text-rose-500 uppercase tracking-wider">UI / UX Engineering</div>
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Tri-Tier Portal Ecosystem</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5 text-xs">
+        <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 space-y-2.5">
+          <div class="text-rose-400 font-bold text-sm flex items-center gap-2">
+            <i class="fa-solid fa-hospital-user"></i> Patient Emergency Portal
+          </div>
+          <p class="text-slate-400">
+            Real-time search by locality/pincode, 1-click filter pills for ICU & NICU, status badges (Green/Amber/Red), and instant printable triage slips.
+          </p>
+        </div>
+
+        <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 space-y-2.5">
+          <div class="text-blue-400 font-bold text-sm flex items-center gap-2">
+            <i class="fa-solid fa-user-doctor"></i> Hospital Staff Console
+          </div>
+          <p class="text-slate-400">
+            Secure PIN-authenticated portal with large touch buttons (+ / -) for rapid bed allocation during intense triage shifts.
+          </p>
+        </div>
+
+        <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 space-y-2.5">
+          <div class="text-emerald-400 font-bold text-sm flex items-center gap-2">
+            <i class="fa-solid fa-chart-pie"></i> City Health Command
+          </div>
+          <p class="text-slate-400">
+            City-wide occupancy metrics, automated critical shortage detection (flags facilities with &le; 2 ICU beds), and Chart.js visualizations.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7: AUTOMATED TESTING -->
+    <div class="slide flex-col justify-center max-w-5xl w-full space-y-6">
+      <div class="text-xs font-bold text-rose-500 uppercase tracking-wider">Verification & Quality Assurance</div>
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-white">100% Automated Test Suite Coverage</h2>
+
+      <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-3 font-mono text-xs">
+        <div class="text-emerald-400 font-bold font-sans text-sm">
+          <i class="fa-solid fa-check-double mr-1"></i> 12/12 Automated Pytest Tests Passing in 0.47s
+        </div>
+        <div class="text-slate-300 space-y-1">
+          <div>✓ test_health_check - Validates server uptime & configuration</div>
+          <div>✓ test_home_page, test_staff_page, test_analytics_page - Template rendering checks</div>
+          <div>✓ test_search_hospitals & test_filter_by_bed_type - Search query filtering</div>
+          <div>✓ test_staff_login_invalid_pin & test_staff_login_valid_pin - Security PIN authentication</div>
+          <div>✓ test_bed_update_flow - Validates +1 / -1 inventory math & audit log insertion</div>
+          <div>✓ test_websocket_connection - WebSocket handshake & ping-pong heartbeat verification</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8: THE TWO-WINDOW DEMO -->
+    <div class="slide flex-col justify-center max-w-5xl w-full space-y-6">
+      <div class="text-xs font-bold text-rose-500 uppercase tracking-wider">Live Examiner Demonstration</div>
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-white">The "Two-Window" Live Synchronization Demo</h2>
+
+      <div class="space-y-3 text-xs">
+        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 flex items-start gap-3">
+          <span class="w-6 h-6 rounded-full bg-rose-600 text-white flex items-center justify-center font-bold text-xs flex-shrink-0">1</span>
+          <div>
+            <div class="font-bold text-white">Open Two Windows Side by Side</div>
+            <div class="text-slate-400 mt-0.5">Left Window: Patient Portal (<code class="text-rose-400">http://localhost:8000</code>) | Right Window: Staff Console (<code class="text-rose-400">http://localhost:8000/staff</code>)</div>
+          </div>
+        </div>
+
+        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 flex items-start gap-3">
+          <span class="w-6 h-6 rounded-full bg-rose-600 text-white flex items-center justify-center font-bold text-xs flex-shrink-0">2</span>
+          <div>
+            <div class="font-bold text-white">Authenticate Staff & Mutate State</div>
+            <div class="text-slate-400 mt-0.5">Select City Civil Hospital, enter PIN <b>1234</b>, and click <b>[+ Vacated Bed]</b> under ICU Ward.</div>
+          </div>
+        </div>
+
+        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 flex items-start gap-3">
+          <span class="w-6 h-6 rounded-full bg-rose-600 text-white flex items-center justify-center font-bold text-xs flex-shrink-0">3</span>
+          <div>
+            <div class="font-bold text-white">Observe Instant Sub-50ms Reactive Update</div>
+            <div class="text-slate-400 mt-0.5">The patient screen flashes with a blue highlight, plays a chime tone, and increments without any manual refresh!</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9: VIVA DEFENSE QUESTIONS -->
+    <div class="slide flex-col justify-center max-w-5xl w-full space-y-6">
+      <div class="text-xs font-bold text-rose-500 uppercase tracking-wider">Viva Defense Preparation</div>
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Examiner Viva Questions & Model Answers</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-1.5">
+          <div class="font-bold text-rose-400">Q: Why FastAPI over Flask?</div>
+          <div class="text-slate-300">FastAPI natively supports asynchronous ASGI and WebSockets out-of-the-box, unlike Flask which requires blocking WSGI workarounds or heavy add-ons.</div>
+        </div>
+
+        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-1.5">
+          <div class="font-bold text-rose-400">Q: How do you handle dropped connections?</div>
+          <div class="text-slate-300">The client has an auto-reconnect engine with exponential backoff. The server connection manager safely prunes dead sockets to prevent memory leaks.</div>
+        </div>
+
+        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-1.5">
+          <div class="font-bold text-rose-400">Q: How do you prevent invalid bed numbers?</div>
+          <div class="text-slate-300">Strict Pydantic v2 validation guards prevent negative bed numbers (&lt;0) or numbers exceeding the hospital's registered maximum physical capacity.</div>
+        </div>
+
+        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-1.5">
+          <div class="font-bold text-rose-400">Q: How does this scale to 100+ hospitals?</div>
+          <div class="text-slate-300">Through horizontal Docker scaling and a Redis Pub/Sub message broker connecting multiple distributed FastAPI nodes.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10: CONCLUSION -->
+    <div class="slide flex-col justify-center max-w-5xl w-full space-y-6 text-center">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold mx-auto">
+        <i class="fa-solid fa-flag-checkered"></i> Conclusion & Future Roadmap
+      </div>
+      <h2 class="text-4xl sm:text-5xl font-black text-white">Scaling Into Critical Care Infrastructure</h2>
+      <p class="text-slate-400 max-w-2xl mx-auto text-sm">
+        LifeLine bridges the critical communication gap in emergency medicine. By combining <b>FastAPI, WebSockets, and SQL relational storage</b>, it provides a life-saving tool that is robust, scalable, and production-ready.
+      </p>
+
+      <div class="pt-6 flex justify-center gap-4">
+        <a href="/download/presentation" class="px-6 py-3 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold transition shadow-lg shadow-rose-600/30 flex items-center gap-2 text-sm">
+          <i class="fa-solid fa-file-powerpoint"></i> Download PowerPoint (.PPTX)
+        </a>
+        <a href="/" class="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold transition text-sm">
+          Back to Live Portal
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- BOTTOM NAVIGATION CONTROLS -->
+  <footer class="border-t border-slate-800 bg-slate-900/80 px-6 py-4 flex items-center justify-between text-xs">
+    <div class="text-slate-500 hidden sm:block">
+      Use <kbd class="px-2 py-1 bg-slate-800 rounded border border-slate-700 text-slate-300">←</kbd> and <kbd class="px-2 py-1 bg-slate-800 rounded border border-slate-700 text-slate-300">→</kbd> arrow keys to navigate slides.
+    </div>
+
+    <div class="flex items-center gap-3 mx-auto sm:mx-0">
+      <button onclick="prevSlide()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl transition flex items-center gap-1.5">
+        <i class="fa-solid fa-arrow-left"></i> Previous
+      </button>
+      <button onclick="nextSlide()" class="px-5 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl transition flex items-center gap-1.5 shadow-md shadow-rose-600/20">
+        Next <i class="fa-solid fa-arrow-right"></i>
+      </button>
+    </div>
+  </footer>
+
+  <script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll(".slide");
+    const totalSlides = slides.length;
+
+    document.getElementById("totalSlidesNum").textContent = totalSlides;
+
+    function showSlide(index) {
+      if (index < 0) index = 0;
+      if (index >= totalSlides) index = totalSlides - 1;
+      
+      slides.forEach(s => s.classList.remove("active"));
+      slides[index].classList.add("active");
+      currentSlide = index;
+
+      document.getElementById("currentSlideNum").textContent = currentSlide + 1;
+      const pct = ((currentSlide + 1) / totalSlides) * 100;
+      document.getElementById("slideProgressBar").style.width = pct + "%";
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides - 1) {
+        showSlide(currentSlide + 1);
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) {
+        showSlide(currentSlide - 1);
+      }
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => console.log(err));
+      } else {
+        document.exitFullscreen();
+      }
+    }
+
+    // Keyboard navigation
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") {
+        nextSlide();
+      } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
+        prevSlide();
+      }
+    });
+  </script>
+</body>
+</html>

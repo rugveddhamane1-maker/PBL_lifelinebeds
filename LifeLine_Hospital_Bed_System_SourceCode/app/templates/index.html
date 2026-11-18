@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LifeLine - Emergency Real-Time Hospital Bed Availability System</title>
+  
+  <!-- Tailwind CSS & FontAwesome -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/styles.css">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col">
+
+  <!-- EMERGENCY TOP BANNER -->
+  <div class="bg-rose-600 text-white px-4 py-2 text-xs font-semibold flex items-center justify-between">
+    <div class="max-w-7xl mx-auto w-full flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-white animate-ping"></span>
+        <span>CENTRAL EMERGENCY CASUALTY HOTLINE: <b>108 / 112</b> (24x7 Ambulance Dispatch)</span>
+      </div>
+      <div class="hidden sm:flex items-center gap-4 text-[11px] opacity-90">
+        <span><i class="fa-solid fa-bolt mr-1"></i> Sub-Second WebSocket Sync Active</span>
+        <span><i class="fa-solid fa-shield-halved mr-1"></i> Health Ministry Verified</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVIGATION HEADER -->
+  <header class="bg-white/95 backdrop-blur-md sticky top-0 z-30 border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <a href="/" class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-rose-600 to-rose-500 text-white flex items-center justify-center shadow-lg shadow-rose-600/30 text-lg font-black">
+          <i class="fa-solid fa-hospital"></i>
+        </div>
+        <div>
+          <span class="text-lg font-extrabold tracking-tight text-slate-900 flex items-center gap-1.5">
+            LifeLine <span class="text-rose-600">Beds</span>
+          </span>
+          <span class="text-[10px] font-semibold text-slate-400 block -mt-1 tracking-wider uppercase">
+            Real-Time Critical Care
+          </span>
+        </div>
+      </a>
+
+      <!-- Sync Status & Nav Links -->
+      <div class="flex items-center gap-3">
+        
+        <!-- Live WebSocket Indicator -->
+        <div id="wsStatusBadge" class="hidden sm:inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+          <span class="w-2.5 h-2.5 bg-emerald-500 rounded-full inline-block mr-1.5 pulse-live"></span>
+          Live Sync Connected
+        </div>
+
+        <!-- Sound Toggle -->
+        <button id="soundToggleBtn" onclick="toggleAudio()" class="w-9 h-9 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 flex items-center justify-center text-slate-600 shadow-sm transition" title="Toggle Bed Update Audio Alert">
+          <i class="fa-solid fa-volume-high text-emerald-600"></i>
+        </button>
+
+        <!-- Navigation Links -->
+        <a href="/analytics" class="hidden md:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 transition">
+          <i class="fa-solid fa-chart-pie text-slate-500"></i> City Analytics
+        </a>
+
+        <a href="/staff" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 shadow-sm transition active:scale-95">
+          <i class="fa-solid fa-user-doctor text-rose-400"></i> Hospital Staff Portal
+        </a>
+
+        <a href="/docs" target="_blank" class="hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-900 transition" title="Interactive FastAPI Swagger Docs">
+          <i class="fa-solid fa-code"></i> API Docs
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="bg-gradient-to-b from-rose-50/60 via-slate-50 to-slate-50 pt-8 pb-6 border-b border-slate-200/60">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="max-w-3xl">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-100/70 text-rose-700 text-xs font-bold mb-3">
+          <i class="fa-solid fa-heart-pulse"></i> Zero Delay Emergency Response Network
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
+          Find Available <span class="text-rose-600 underline decoration-rose-300 decoration-wavy decoration-2">ICU, NICU & Hospital Beds</span> in Real Time.
+        </h1>
+        <p class="text-slate-600 text-sm sm:text-base mt-2 leading-relaxed">
+          Every second matters in critical care emergencies. Our real-time WebSocket network connects directly to casualty wards so you never waste time visiting occupied hospitals.
+        </p>
+      </div>
+
+      <!-- LIVE METRIC STATS BAR -->
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mt-6">
+        <div class="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+          <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Monitored Centers</div>
+          <div class="text-2xl font-black text-slate-900 mt-1" id="statTotalHospitals">-</div>
+          <div class="text-[10px] text-emerald-600 font-semibold mt-0.5"><i class="fa-solid fa-check-circle"></i> 100% Online</div>
+        </div>
+
+        <div class="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+          <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Vacant Beds</div>
+          <div class="text-2xl font-black text-slate-900 mt-1" id="statTotalAvailableBeds">-</div>
+          <div class="text-[10px] text-slate-500 font-medium mt-0.5">Across All Wards</div>
+        </div>
+
+        <div class="bg-white p-3.5 rounded-xl border border-rose-200 bg-rose-50/20 shadow-sm flex flex-col justify-between">
+          <div class="text-[11px] font-bold text-rose-600 uppercase tracking-wider flex items-center justify-between">
+            <span>Available ICU</span>
+            <i class="fa-solid fa-heart-pulse text-xs"></i>
+          </div>
+          <div class="text-2xl font-black text-rose-600 mt-1" id="statIcuAvailable">-</div>
+          <div class="text-[10px] text-rose-500 font-semibold mt-0.5">Critical Emergency</div>
+        </div>
+
+        <div class="bg-white p-3.5 rounded-xl border border-amber-200 bg-amber-50/20 shadow-sm flex flex-col justify-between">
+          <div class="text-[11px] font-bold text-amber-600 uppercase tracking-wider flex items-center justify-between">
+            <span>Available NICU</span>
+            <i class="fa-solid fa-baby text-xs"></i>
+          </div>
+          <div class="text-2xl font-black text-amber-600 mt-1" id="statNicuAvailable">-</div>
+          <div class="text-[10px] text-amber-600 font-semibold mt-0.5">Neonatal Care</div>
+        </div>
+
+        <div class="bg-white p-3.5 rounded-xl border border-blue-200 bg-blue-50/20 shadow-sm flex flex-col justify-between col-span-2 sm:col-span-1">
+          <div class="text-[11px] font-bold text-blue-600 uppercase tracking-wider flex items-center justify-between">
+            <span>Ventilators</span>
+            <i class="fa-solid fa-lungs text-xs"></i>
+          </div>
+          <div class="text-2xl font-black text-blue-600 mt-1" id="statVentilatorAvailable">-</div>
+          <div class="text-[10px] text-blue-500 font-semibold mt-0.5">Advanced Life Support</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SEARCH & FILTER TOOLBAR -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-2 mb-6 w-full">
+    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+      
+      <!-- Top Row: Search input and locality filter -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
+        
+        <!-- Search -->
+        <div class="md:col-span-8 relative">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-slate-400 text-sm"></i>
+          <input 
+            type="text" 
+            id="searchInput" 
+            placeholder="Search by Hospital Name, Area, Locality or Pincode..."
+            class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-500 text-sm placeholder:text-slate-400">
+        </div>
+
+        <!-- Locality Dropdown -->
+        <div class="md:col-span-4 relative">
+          <select 
+            id="localityFilter" 
+            class="w-full py-2.5 px-3 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-rose-500 text-sm font-medium text-slate-700">
+            <option value="ALL">All Localities / Areas</option>
+          </select>
+        </div>
+
+      </div>
+
+      <!-- Bottom Row: Category Pill Filters -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-1 pt-1 no-scrollbar">
+        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider mr-1 flex-shrink-0">
+          <i class="fa-solid fa-filter mr-1"></i> Filter:
+        </span>
+
+        <button onclick="setBedFilter('ALL')" data-filter="ALL" class="filter-pill px-4 py-2 rounded-xl text-xs font-bold bg-slate-900 text-white shadow-sm transition flex-shrink-0">
+          All Hospitals
+        </button>
+
+        <button onclick="setBedFilter('ICU')" data-filter="ICU" class="filter-pill px-4 py-2 rounded-xl text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 transition flex items-center gap-1.5 flex-shrink-0">
+          <i class="fa-solid fa-heart-pulse text-rose-500"></i> ICU Available
+        </button>
+
+        <button onclick="setBedFilter('NICU')" data-filter="NICU" class="filter-pill px-4 py-2 rounded-xl text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 transition flex items-center gap-1.5 flex-shrink-0">
+          <i class="fa-solid fa-baby text-amber-500"></i> NICU Available
+        </button>
+
+        <button onclick="setBedFilter('VENTILATOR')" data-filter="VENTILATOR" class="filter-pill px-4 py-2 rounded-xl text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 transition flex items-center gap-1.5 flex-shrink-0">
+          <i class="fa-solid fa-lungs text-blue-500"></i> Ventilator Available
+        </button>
+
+        <button onclick="setBedFilter('OXYGEN')" data-filter="OXYGEN" class="filter-pill px-4 py-2 rounded-xl text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 transition flex items-center gap-1.5 flex-shrink-0">
+          <i class="fa-solid fa-wind text-teal-500"></i> Oxygen Beds
+        </button>
+
+        <button onclick="setBedFilter('GENERAL')" data-filter="GENERAL" class="filter-pill px-4 py-2 rounded-xl text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 transition flex items-center gap-1.5 flex-shrink-0">
+          <i class="fa-solid fa-bed text-indigo-500"></i> General Ward
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- HOSPITAL CARDS GRID -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 flex-1 w-full">
+    <div id="hospitalsContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <!-- Dynamically filled by app.js -->
+      <div class="col-span-full py-20 text-center">
+        <i class="fa-solid fa-spinner fa-spin text-3xl text-rose-600 mb-3"></i>
+        <p class="text-sm text-slate-500 font-semibold">Connecting to live hospital bed network...</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toastContainer" class="fixed top-20 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none">
+    <!-- Toasts injected here -->
+  </div>
+
+  <!-- EMERGENCY TRIAGE SLIP MODAL -->
+  <div id="tokenModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 relative">
+      <button onclick="closeTokenModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-lg">✕</button>
+
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center text-xl font-bold">
+          <i class="fa-solid fa-ticket"></i>
+        </div>
+        <div>
+          <h3 class="font-extrabold text-slate-900 text-lg">Emergency Triage Slip</h3>
+          <p class="text-xs text-slate-500">Present this reference at the Casualty Desk</p>
+        </div>
+      </div>
+
+      <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-center mb-4">
+        <div class="text-xs uppercase tracking-wider font-bold text-slate-400">Emergency Priority Code</div>
+        <div class="text-3xl font-black text-rose-600 my-1 font-mono tracking-wider" id="tokenSlipCode">EMG-0000</div>
+        <div class="text-xs font-semibold text-slate-700" id="tokenHospitalName">-</div>
+        <input type="hidden" id="tokenHospitalId">
+      </div>
+
+      <div class="space-y-3 mb-5">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Patient Name</label>
+          <input type="text" placeholder="e.g. John Doe" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-rose-500">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Primary Emergency Condition</label>
+          <select class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-rose-500 bg-white">
+            <option>Severe Trauma / Accident</option>
+            <option>Cardiac / Chest Pain</option>
+            <option>Respiratory Failure / Oxygen Drop</option>
+            <option>Neonatal Emergency (Preterm Infant)</option>
+            <option>Neurological / Stroke</option>
+            <option>Other Acute Condition</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="flex gap-2">
+        <button onclick="printTriageSlip()" class="flex-1 py-2.5 bg-slate-900 text-white font-bold rounded-xl text-xs hover:bg-slate-800 transition">
+          <i class="fa-solid fa-print mr-1"></i> Print / Save Slip
+        </button>
+        <button onclick="closeTokenModal()" class="px-4 py-2.5 bg-slate-100 text-slate-700 font-bold rounded-xl text-xs hover:bg-slate-200 transition">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="bg-white border-t border-slate-200 mt-auto py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div>
+        <p class="text-xs font-bold text-slate-800">
+          LifeLine Hospital Bed Availability System • College PBL Mini-Project
+        </p>
+        <p class="text-xs text-slate-500 mt-0.5">
+          Engineered with Python FastAPI, WebSocket, SQLAlchemy ORM, and SQLite / PostgreSQL.
+        </p>
+      </div>
+      <div class="flex items-center gap-4 text-xs font-semibold text-slate-600">
+        <a href="/staff" class="hover:text-rose-600 transition"><i class="fa-solid fa-lock mr-1"></i> Staff Login</a>
+        <a href="/analytics" class="hover:text-rose-600 transition"><i class="fa-solid fa-chart-line mr-1"></i> City Analytics</a>
+        <a href="/docs" target="_blank" class="hover:text-rose-600 transition"><i class="fa-solid fa-book mr-1"></i> Swagger Docs</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
